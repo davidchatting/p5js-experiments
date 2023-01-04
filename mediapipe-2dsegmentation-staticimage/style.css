@@ -1,0 +1,15 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+.data-img {
+   visibility: hidden;  /* because we need to keep the dimensions */
+}
+
+.mediapipe-canvas {
+}
