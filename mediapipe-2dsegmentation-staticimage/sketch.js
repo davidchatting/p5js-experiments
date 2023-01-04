@@ -2,8 +2,6 @@
 //-
 //David Chatting - davidchatting.com -  31st December 2022
 
-p5.disableFriendlyErrors = true;
-
 var canvas;
 var frame = null;
 var segmentedFrame = null;
@@ -13,6 +11,8 @@ var selfieSegmentation = null;
 var foundBodies = [];
 
 function setup() {
+  p5.disableFriendlyErrors = true;
+
   canvas = createCanvas(800, 800, WEBGL);
   canvas.drop(onFileDropped);
   createForegroundSegmenter();

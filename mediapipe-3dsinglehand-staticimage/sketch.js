@@ -3,8 +3,6 @@
 //-
 //David Chatting - davidchatting.com -  29th December 2022
 
-p5.disableFriendlyErrors = true;
-
 var handposeModel = null;
 var foundHands = [];
 
@@ -24,6 +22,8 @@ handpose.load(handposeConfig).then(function(_model){
 })
 
 function setup() {
+  p5.disableFriendlyErrors = true;
+
   canvas = createCanvas(800, 800, WEBGL);
   canvas.drop(onFileDropped);
 }

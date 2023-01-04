@@ -3,8 +3,6 @@
 //-
 //David Chatting - davidchatting.com -  29th December 2022
 
-p5.disableFriendlyErrors = true;
-
 var blazefaceModel = null;
 var foundfaces = [];
 
@@ -17,6 +15,8 @@ blazeface.load().then(function(_model){
 })
 
 function setup() {
+  p5.disableFriendlyErrors = true;
+
   canvas = createCanvas(800, 800, WEBGL);
   canvas.drop(onFileDropped);
 }
