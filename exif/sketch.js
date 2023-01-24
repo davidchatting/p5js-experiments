@@ -7,6 +7,7 @@ function setup() {
   p5.disableFriendlyErrors = true;
 
   canvas = createCanvas(800, 800, WEBGL);
+  canvas.parent("p5jsCanvas");
   canvas.drop(onFileDropped);
   
   nlp.plugin(compromiseDates); // load the plugin
