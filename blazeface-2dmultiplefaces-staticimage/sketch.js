@@ -7,7 +7,7 @@ var blazefaceModel = null;
 var foundfaces = [];
 
 var canvas;
-var frame = null;
+var outputImage = null;
 
 blazeface.load().then(function(_model){
   console.log("blazeface model loaded.")
@@ -17,33 +17,33 @@ blazeface.load().then(function(_model){
 function setup() {
   p5.disableFriendlyErrors = true;
 
-  canvas = createCanvas(800, 800, WEBGL);
+  canvas = createCanvas(800, 800);
   canvas.parent("p5jsCanvas");
   canvas.drop(onFileDropped);
 }
 
 function onFileDropped(file) {
   console.log("onFileDropped");
-  frame = createImg(file.data, "alt", "", findFaces);
-  frame.style('visibility', 'hidden');  //because we need to keep the dimensions - can't use frame.hide()
+  outputImage = createImg(file.data, "alt", "", findFaces);
+  outputImage.style('visibility', 'hidden');  //because we need to keep the dimensions - can't use outputImage.hide()
 }
 
 function draw() {
   background(200);
-  orbitControl();  //allow 3d control of the image
   
-  if(frame) {
+  if(outputImage) {
     push();
-    scale(min(width/frame.width, height/frame.height));  //scale the image to fit the canvas
-    translate(-frame.width/2, -frame.height/2);          //centre the image
-    image(frame, 0, 0, frame.width, frame.height);
+    translate(width/2, height/2); 
+    scale(min(width/outputImage.width, height/outputImage.height));  //scale the image to fit the canvas
+    translate(-outputImage.width/2, -outputImage.height/2);          //centre the image
+    image(outputImage, 0, 0, outputImage.width, outputImage.height);
     drawFace(foundfaces);
     pop();
   }
 }
 
 async function findFaces() {  
-  foundfaces = await blazefaceModel.estimateFaces(frame.elt, false);
+  foundfaces = await blazefaceModel.estimateFaces(outputImage.elt, false);
 };
 
 function drawFace(faces){
