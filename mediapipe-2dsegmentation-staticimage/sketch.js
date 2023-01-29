@@ -49,13 +49,7 @@ function draw() {
     scale(min(width/inputImage.width, height/inputImage.height));  //scale the image to fit the canvas
     translate(-inputImage.width/2, -inputImage.height/2);          //centre the image
     image(inputImage, 0, 0, inputImage.width, inputImage.height);
-    if(outputImage) {
-      push();
-      translate(outputImage.width, 0);
-      scale(-1,1);
-      image(outputImage, 0, 0);
-      pop();
-    }
+    if(outputImage) image(outputImage, 0, 0);
     pop();
   }
 }
@@ -86,10 +80,24 @@ function imageBitmapToP5Image(bitmap, image) {
   //canvas to image
   const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
   image.loadPixels();
-  for (n = 0; n < image.pixels.length; n++) {
-    image.pixels[n] = imageData.data[n];  //Uint8ClampedArray
+  
+  //copy and mirror pixels
+  for (var y = 0; y < imageData.height; ++y) {
+    for (var x = 0; x < imageData.width; ++x) {
+      var a = getIndex(x,y,imageData.width,4);
+      var b = getIndex(imageData.width - x,y,imageData.width,4);
+      
+      image.pixels[a+0] = imageData.data[b+0];  //Uint8ClampedArray
+      image.pixels[a+1] = imageData.data[b+1];
+      image.pixels[a+2] = imageData.data[b+2];
+      image.pixels[a+3] = imageData.data[b+3];
+    }
   }
   image.updatePixels();
   
   tempCanvas.remove();
+}
+
+function getIndex(x, y, width, channels) {
+  return(((width * y) + x) * channels);
 }
