@@ -7,9 +7,6 @@ canvas {
   display: block;
 }
 
-.data-img {
-   visibility: hidden;  /* because we need to keep the dimensions */
-}
-
-.mediapipe-canvas {
+.hide {
+  visibility: hidden;
 }

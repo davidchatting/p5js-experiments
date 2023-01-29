@@ -4,16 +4,13 @@
 
 var canvas;
 var inputImage = null;
-var segmentedFrame = null;
-var segmentationCanvas = null;
-var bodySegmenter = null;
+var outputImage = null;
 var selfieSegmentation = null;
-var foundBodies = [];
 
 function setup() {
   p5.disableFriendlyErrors = true;
 
-  canvas = createCanvas(800, 800);
+  canvas = createCanvas(400, 400);
   canvas.parent("p5jsCanvas");
   
   canvas.drop(onFileDropped);
@@ -52,11 +49,11 @@ function draw() {
     scale(min(width/inputImage.width, height/inputImage.height));  //scale the image to fit the canvas
     translate(-inputImage.width/2, -inputImage.height/2);          //centre the image
     image(inputImage, 0, 0, inputImage.width, inputImage.height);
-    if(segmentedFrame) {
+    if(outputImage) {
       push();
-      translate(segmentedFrame.width, 0);
+      translate(outputImage.width, 0);
       scale(-1,1);
-      image(segmentedFrame, 0, 0);
+      image(outputImage, 0, 0);
       pop();
     }
     pop();
@@ -65,27 +62,34 @@ function draw() {
 
 async function findForeground(imageElement) {
   console.log("findForeground");
-  segmentationCanvas = document.createElement('canvas');
-  segmentationCanvas.classList.add('mediapipe-canvas');
-  
-  segmentationCanvas.width = imageElement.width;
-  segmentationCanvas.height = imageElement.height;
-  document.body.appendChild(segmentationCanvas);
-  
   await selfieSegmentation.send({ image: imageElement });
 }
 
 function onFindForegroundResults(results) {
   console.log("onFindForegroundResults");
-  const canvasCtx = segmentationCanvas.getContext('2d');
-  canvasCtx.drawImage(results.segmentationMask, 0, 0, segmentationCanvas.width, segmentationCanvas.height);
-  const imageData = canvasCtx.getImageData(0, 0, segmentationCanvas.width, segmentationCanvas.height);
   
-  segmentedFrame = createImage(segmentationCanvas.width, segmentationCanvas.height);
-  segmentedFrame.loadPixels();
+  outputImage = createImage(results.segmentationMask.width, results.segmentationMask.height);
+  imageBitmapToP5Image(results.segmentationMask, outputImage);
+}
+
+function imageBitmapToP5Image(bitmap, image) {
+  //bitmap to canvas
+  let tempCanvas = document.createElement('canvas');
+  tempCanvas.id = 'tempCanvas';
+  tempCanvas.width = bitmap.width;
+  tempCanvas.height = bitmap.height
+  tempCanvas.classList.add('hide');
+  document.body.appendChild(tempCanvas);
+  const ctx = tempCanvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height);
   
-  for (n = 0; n < segmentedFrame.pixels.length; n++) {
-    segmentedFrame.pixels[n] = imageData.data[n]; ;
+  //canvas to image
+  const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+  image.loadPixels();
+  for (n = 0; n < image.pixels.length; n++) {
+    image.pixels[n] = imageData.data[n];  //Uint8ClampedArray
   }
-  segmentedFrame.updatePixels();
+  image.updatePixels();
+  
+  tempCanvas.remove();
 }
