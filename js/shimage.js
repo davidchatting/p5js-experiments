@@ -1,30 +1,20 @@
-//shimage - image shims
+//shimage - image shims for p5js
 //David Chatting - davidchatting.com -  29th January 2023
 
-function cvMatToP5Image(mat, image) {
-  //mat to canvas
+function imageBitmapToP5Image(bitmap, image) {
+  let s = image.width / bitmap.width;
+  
+  //bitmap to canvas
   let tempCanvas = document.createElement('canvas');
   tempCanvas.id = 'tempCanvas';
+  tempCanvas.width = bitmap.width * s;
+  tempCanvas.height = bitmap.height * s;
   tempCanvas.classList.add('hide');
   document.body.appendChild(tempCanvas);
+  const ctx = tempCanvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0, bitmap.width * s, bitmap.height * s);
   
-  let resultSize = mat.size();
-  tempCanvas.width = resultSize.width;
-  tempCanvas.height = resultSize.height
-  
-  cv.imshow('tempCanvas', mat);
-  
-  //canvas to image
-  const tempCanvasCtx = tempCanvas.getContext('2d');
-  const imageData = tempCanvasCtx.getImageData(0, 0, resultSize.width, resultSize.height);
-  
-  image.loadPixels();
-
-  for (n = 0; n < image.pixels.length; n++) {
-    image.pixels[n] = imageData.data[n];     //Uint8ClampedArray
-  }
-  image.updatePixels();
-  
+  canvasToP5Image(tempCanvas, image);
   tempCanvas.remove();
 }
 
@@ -46,21 +36,6 @@ function canvasToP5Image(canvas, image) {
       }
     }
     image.updatePixels();
-}
-
-function imageBitmapToP5Image(bitmap, image) {
-  //bitmap to canvas
-  let tempCanvas = document.createElement('canvas');
-  tempCanvas.id = 'tempCanvas';
-  tempCanvas.width = bitmap.width;
-  tempCanvas.height = bitmap.height
-  tempCanvas.classList.add('hide');
-  document.body.appendChild(tempCanvas);
-  const ctx = tempCanvas.getContext('2d');
-  ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height);
-  
-  canvasToP5Image(tempCanvas, image);
-  tempCanvas.remove();
 }
 
 function getIndex(x, y, width, channels) {
