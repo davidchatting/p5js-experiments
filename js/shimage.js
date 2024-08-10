@@ -41,3 +41,24 @@ function canvasToP5Image(canvas, image) {
 function getIndex(x, y, width, channels) {
   return(((width * y) + x) * channels);
 }
+
+function makeP5Mask(image, mask){
+  //WiP
+  /*
+  //P5 Mask are defined by the alpha channel
+  mask.copy(image, 0, 0, image.width, image.height, 0, 0, image.width, image.height);
+  mask.filter(GRAY);
+  mask.loadPixels();
+  for (var i = 0; i < image.pixels.length; i += 4) {
+    mask.pixels[i+3] = mask.pixels[i];
+    mask.pixels[i] = 0;
+    mask.pixels[i+1] = 0;
+    mask.pixels[i+2] = 0;
+  }
+  mask.updatePixels();
+  */
+}
+
+function cvMatToP5Image(mat, image)) {
+  //WiP
+}
