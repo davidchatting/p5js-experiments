@@ -19,7 +19,7 @@ function setup() {
 
 async function createForegroundSegmenter() {
   selfieSegmentation = new SelfieSegmentation({locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/${file}`;
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@latest/${file}`;
   }});
   var options = {
       selfieMode: true,
@@ -64,4 +64,5 @@ function onFindForegroundResults(results) {
   
   outputImage = createImage(results.segmentationMask.width, results.segmentationMask.height);
   imageBitmapToP5Image(results.segmentationMask, outputImage, {flipX: true, flipY: false});
+  outputImage.filter(GRAY);
 }
