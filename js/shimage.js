@@ -9,7 +9,7 @@ function imageBitmapToP5Image(bitmap, image, options = { flipX: false, flipY: fa
   tempCanvas.id = 'tempCanvas';
   tempCanvas.width = bitmap.width * s;
   tempCanvas.height = bitmap.height * s;
-  tempCanvas.classList.add('hide');
+  //tempCanvas.classList.add('hide');
   document.body.appendChild(tempCanvas);
   const ctx = tempCanvas.getContext('2d');
   ctx.drawImage(bitmap, 0, 0, bitmap.width * s, bitmap.height * s);
