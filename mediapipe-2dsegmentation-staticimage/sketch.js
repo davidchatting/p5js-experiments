@@ -45,11 +45,11 @@ function draw() {
   
   if(inputImage) {
     push();
-    translate(width/2, height/2); 
-    scale(min(width/inputImage.width, height/inputImage.height));  //scale the image to fit the canvas
-    translate(-inputImage.width/2, -inputImage.height/2);          //centre the image
-    image(inputImage, 0, 0, inputImage.width, inputImage.height);
-    if(outputImage) image(outputImage, 0, 0);
+      translate(width/2, height/2); 
+      scale(min(width/inputImage.width, height/inputImage.height));  //scale the image to fit the canvas
+      translate(-inputImage.width/2, -inputImage.height/2);          //centre the image
+      image(inputImage, 0, 0, inputImage.width, inputImage.height);
+      if(outputImage) image(outputImage, 0, 0);
     pop();
   }
 }
@@ -63,5 +63,5 @@ function onFindForegroundResults(results) {
   console.log("onFindForegroundResults");
   
   outputImage = createImage(results.segmentationMask.width, results.segmentationMask.height);
-  imageBitmapToP5Image(results.segmentationMask, outputImage);
+  imageBitmapToP5Image(results.segmentationMask, outputImage, {flipX: true, flipY: false});
 }
