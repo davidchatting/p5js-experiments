@@ -18,24 +18,44 @@ function imageBitmapToP5Image(bitmap, image) {
   tempCanvas.remove();
 }
 
-function canvasToP5Image(canvas, image) {
-    const ctx = canvas.getContext('2d');
-    const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-    image.loadPixels();
-    
-    //copy and mirror pixels
-    for (var y = 0; y < imageData.height; ++y) {
-      for (var x = 0; x < imageData.width; ++x) {
-        var a = getIndex(x,y,imageData.width,4);
-        var b = getIndex(imageData.width - x,y,imageData.width,4);
-        
-        image.pixels[a+0] = imageData.data[b+0];  //Uint8ClampedArray
-        image.pixels[a+1] = imageData.data[b+1];
-        image.pixels[a+2] = imageData.data[b+2];
-        image.pixels[a+3] = imageData.data[b+3];
+function canvasToP5Image(canvas, p5img, options = { flipX: false, flipY: false }) {
+  if (!canvas || !p5img) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  const src = ctx.getImageData(0, 0, w, h).data; // Uint8ClampedArray (RGBA, top-left origin)
+
+  // ensure p5 image is correct size
+  if (p5img.width !== w || p5img.height !== h) {
+    p5img.resize(w, h);
+  }
+
+  p5img.loadPixels();
+  const dst = p5img.pixels; // Uint8ClampedArray
+
+  const flipX = !!options.flipX;
+  const flipY = !!options.flipY;
+
+  if (!flipX && !flipY) {
+    // fast path: identical layout
+    dst.set(src);
+  } else {
+    // copy with optional flips
+    for (let y = 0; y < h; ++y) {
+      const ty = flipY ? (h - 1 - y) : y;
+      for (let x = 0; x < w; ++x) {
+        const tx = flipX ? (w - 1 - x) : x;
+        const sIdx = (ty * w + tx) * 4;
+        const dIdx = (y * w + x) * 4;
+        dst[dIdx]     = src[sIdx];
+        dst[dIdx + 1] = src[sIdx + 1];
+        dst[dIdx + 2] = src[sIdx + 2];
+        dst[dIdx + 3] = src[sIdx + 3];
       }
     }
-    image.updatePixels();
+  }
+
+  p5img.updatePixels();
 }
 
 function getIndex(x, y, width, channels) {
