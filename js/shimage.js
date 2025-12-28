@@ -30,6 +30,9 @@ function canvasToP5Image(canvas, p5img, options = { flipX: false, flipY: false }
     p5img.resize(w, h);
   }
 
+  const srcChannels = Math.max(1, src.length / (w*h) | 0); // 1,3 or 4 expected
+  console.log('srcChannels', srcChannels);
+
   p5img.loadPixels();
   const dst = p5img.pixels; // Uint8ClampedArray
 
