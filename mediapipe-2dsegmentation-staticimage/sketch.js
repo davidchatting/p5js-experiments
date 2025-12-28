@@ -34,10 +34,10 @@ async function createForegroundSegmenter() {
 function onFileDropped(file) {
   console.log("onFileDropped");
   inputImage = createImg(file.data, "alt", "", function () {
-    findForeground(inputImage.elt);
-    inputImage.remove();
+    findForeground(inputImage);
+    //inputImage.remove();
   } );
-  inputImage.elt.classList.add('hide');  //because we need to keep the dimensions - can't use inputImage.hide()
+  //inputImage.elt.classList.add('hide');  //because we need to keep the dimensions - can't use inputImage.hide()
 }
 
 function draw() {
@@ -54,9 +54,9 @@ function draw() {
   }
 }
 
-async function findForeground(imageElement) {
+async function findForeground(image) {
   console.log("findForeground");
-  await selfieSegmentation.send({ image: imageElement });
+  await selfieSegmentation.send({ image: image.elt });
 }
 
 function onFindForegroundResults(results) {
