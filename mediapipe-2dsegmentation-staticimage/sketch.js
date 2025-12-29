@@ -35,9 +35,9 @@ function onFileDropped(file) {
   console.log("onFileDropped");
   inputImage = createImg(file.data, "alt", "", function () {
     findForeground(inputImage);
-    //inputImage.remove();
-  } );
-  //inputImage.elt.classList.add('hide');  //because we need to keep the dimensions - can't use inputImage.hide()
+    inputImage.remove();
+  });
+  inputImage.elt.classList.add('hide');  //because we need to keep the dimensions - can't use inputImage.hide()
 }
 
 function draw() {
@@ -60,8 +60,8 @@ async function findForeground(image) {
 }
 
 function onFindForegroundResults(results) {
-  console.log("onFindForegroundResults");
-  
+  console.log("* onFindForegroundResults", results);
+
   outputImage = createImage(results.segmentationMask.width, results.segmentationMask.height);
   imageBitmapToP5Image(results.segmentationMask, outputImage, {flipX: true, flipY: false});
   outputImage.filter(GRAY);
