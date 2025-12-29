@@ -56,7 +56,35 @@ function draw() {
 
 async function findForeground(image) {
   console.log("findForeground");
-  await selfieSegmentation.send({ image: image.elt });
+  if (!selfieSegmentation) {
+    console.warn("selfieSegmentation not ready");
+    return;
+  }
+
+  const imgEl = image.elt;
+  const w = imgEl.naturalWidth || imgEl.width;
+  const h = imgEl.naturalHeight || imgEl.height;
+
+  // create an offscreen canvas and draw a flipped copy (horizontal)
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = w;
+  tempCanvas.height = h;
+  const ctx = tempCanvas.getContext('2d');
+
+  // flip horizontally
+  ctx.save();
+  ctx.translate(w, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(imgEl, 0, 0, w, h);
+  ctx.restore();
+
+  try {
+    await selfieSegmentation.send({ image: tempCanvas });
+  } catch (err) {
+    console.error("selfieSegmentation.send error:", err);
+  } finally {
+    tempCanvas.remove();
+  }
 }
 
 function onFindForegroundResults(results) {
