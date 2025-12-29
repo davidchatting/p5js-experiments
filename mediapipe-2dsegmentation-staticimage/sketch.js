@@ -62,6 +62,30 @@ async function findForeground(image) {
 function onFindForegroundResults(results) {
   console.log("* onFindForegroundResults", results);
 
+  // create an <img> showing the segmentationMask (ImageBitmap)
+  if (results && results.segmentationMask) {
+    const maskBitmap = results.segmentationMask;
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = maskBitmap.width;
+    tempCanvas.height = maskBitmap.height;
+    const ctx = tempCanvas.getContext('2d');
+    ctx.drawImage(maskBitmap, 0, 0);
+
+    const dataUrl = tempCanvas.toDataURL(); // PNG data URL
+
+    let maskImg = document.getElementById('segmentationMaskImg');
+    if (!maskImg) {
+      maskImg = document.createElement('img');
+      maskImg.id = 'segmentationMaskImg';
+      // append next to p5 canvas container
+      const container = document.getElementById('p5jsCanvas') || document.body;
+      container.appendChild(maskImg);
+    }
+    maskImg.src = dataUrl;
+
+    tempCanvas.remove();
+  }
+
   outputImage = createImage(results.segmentationMask.width, results.segmentationMask.height);
   imageBitmapToP5Image(results.segmentationMask, outputImage, {flipX: true, flipY: false});
   outputImage.filter(GRAY);
